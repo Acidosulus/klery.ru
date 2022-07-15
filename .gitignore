@@ -3,3 +3,5 @@ chromedriver.exe
 __pycache__
 csvs
 options.ini
+*.html
+*.json

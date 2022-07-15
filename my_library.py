@@ -151,6 +151,8 @@ class Price:
 			lc_str = (lc_str+'|').replace(';|', '').replace('|', '') + '\n'
 			if not is_price_have_link(file_name, lc_str):
 				file.write(lc_str)
+			else:
+				print('Товар уже имеется в прайсе, пропуск')
 		file.close()
 		self.goods.clear()	
 

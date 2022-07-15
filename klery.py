@@ -31,8 +31,6 @@ colorama.init()
 ########################################################################################################################
 
 
-
-
 if sys.argv[1] == 'good':
     wd = Login()
     print(sys.argv[1])
@@ -43,6 +41,7 @@ if sys.argv[1] == 'good':
 if sys.argv[1] == 'catalog':
     wd = Login()
     links_list = wd.Get_List_Of_Links_On_Goods_From_Catalog(sys.argv[2])
+    print('Список товаров:', links_list)
     ln_total = len(links_list)
     ln_counter = 0
     price = Price(sys.argv[3])
@@ -52,21 +51,36 @@ if sys.argv[1] == 'catalog':
         if is_price_have_link(sys.argv[3], link):
             print('Товар уже имеется в прайсе')
             continue
-        #try:
+#        try:
         lo_good = unload_one_good(wd, link, sys.argv[3])
-        #except: 
-        #    print(Fore.RED,'ОШИБКА ПРИ ЗАГРУЗКЕ ТОВАРА',Fore.RESET)
-        #    continue
-        if int(lo_good.price)>0:
+#        except:
+#            echo(style('Ошибка загрузки товара',bg='bright_red'))
+#            continue
+        lc_name = lo_good.name if lo_good.name.count(lo_good.article) != 0 else lo_good.article + ' ' + lo_good.name
+        ll_unique = list(set(lo_good.prices))
+        print('Уникальные цены: ', ll_unique)
+        if len(lo_good.prices) != len(lo_good.sizes):
+            print('Несоответствие количества цен и количества товаров, пропуск.')
+            continue
+        for lc_uprice  in ll_unique:
+            j = 0
+            ll_sizes = []
+            ll_prices = []
+            for lc_price in lo_good.prices:
+                if lo_good.prices[j] == lc_uprice:
+                    try:
+                        ll_sizes.append(lo_good.sizes[j])
+                    except:pass
+                j = j + 1
+                print('Шаг: ', j)
             price.add_good('',
-                                prepare_str(lo_good.name + ' ' + lo_good.article),
+                                prepare_str(lc_name),
                                 prepare_str(lo_good.description),
-                                prepare_str(str(round(float(lo_good.price) * float(sys.argv[4]),2))),
+                                prepare_str( str(round(float(lc_uprice.replace(',', '.').replace(' ', ''))*float(sys.argv[4]), 2))),
                                 '15',
                                 prepare_str(link),
                                 prepare_for_csv_non_list(lo_good.pictures),
-                                prepare_for_csv_list(lo_good.sizes)
-                                )
+                                prepare_for_csv_list(ll_sizes))
             price.write_to_csv(sys.argv[3])
 
 if sys.argv[1] == 'reverse':
@@ -75,3 +89,5 @@ if sys.argv[1] == 'reverse':
 if sys.argv[1] == 'ansi':
     convert_file_to_ansi(sys.argv[2] + '_reversed.csv')
 
+try: wd.driver.quit()
+except: pass
