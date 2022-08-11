@@ -58,31 +58,33 @@ class Good:
 		self.description = self.description.replace("| ",'|')
 		self.description = reduce(self.description,"|")
 		
-		elements = ol.driver.find_element(by=By.CLASS_NAME, value='owq-option').find_elements(by=By.CLASS_NAME, value='owq-item')
-		ii = 0
-		for element in elements:
-			st = element.get_attribute('innerHTML')
-			ii += 1
-			#str_to_file(f'table_{ii}.html',st)
-			lc_size = sx(st, 'style="display: inline-block;">','<').strip()
-			lc_availability_source = sx(st, 'data-quantity="','"')
-			lc_price = sx(st, '<td class="price hidden-xs">', '<').strip().replace(' ','').replace('р.','')
-			if len(lc_price)==0:
-				lc_price = sx(st, '<td class="price hidden-xs"><span class="special">', '<').strip().replace(' ','').replace('р.','')
-			if int(lc_availability_source) == 0:
-				lc_availability = 'Нет в наличии'
-			if 8 >= int(lc_availability_source) > 0:
-				lc_availability = f'Осталось {lc_availability_source} шт.'
-				self.sizes.append(lc_size + ' ' + lc_availability)
-				self.prices.append(lc_price)
-			if int(lc_availability_source) >= 9:
-				lc_availability = 'В наличии'
-				self.sizes.append(lc_size)
-				self.prices.append(lc_price)
-			echo(style('     Размер: '+lc_size, fg='bright_cyan')+\
-				style(f'      {lc_availability}  ({lc_availability_source})', fg='bright_white') + \
-				style( '       Цена: ', fg='bright_yellow') + style( lc_price, fg='bright_red'))
-
+		try:
+			elements = ol.driver.find_element(by=By.CLASS_NAME, value='owq-option').find_elements(by=By.CLASS_NAME, value='owq-item')
+			ii = 0
+			for element in elements:
+				st = element.get_attribute('innerHTML')
+				ii += 1
+				#str_to_file(f'table_{ii}.html',st)
+				lc_size = sx(st, 'style="display: inline-block;">','<').strip()
+				lc_availability_source = sx(st, 'data-quantity="','"')
+				lc_price = sx(st, '<td class="price hidden-xs">', '<').strip().replace(' ','').replace('р.','')
+				if len(lc_price)==0:
+					lc_price = sx(st, '<td class="price hidden-xs"><span class="special">', '<').strip().replace(' ','').replace('р.','')
+				if int(lc_availability_source) == 0:
+					lc_availability = 'Нет в наличии'
+				if 8 >= int(lc_availability_source) > 0:
+					lc_availability = f'Осталось {lc_availability_source} шт.'
+					self.sizes.append(lc_size + ' ' + lc_availability)
+					self.prices.append(lc_price)
+				if int(lc_availability_source) >= 9:
+					lc_availability = 'В наличии'
+					self.sizes.append(lc_size)
+					self.prices.append(lc_price)
+				echo(style('     Размер: '+lc_size, fg='bright_cyan')+\
+					style(f'      {lc_availability}  ({lc_availability_source})', fg='bright_white') + \
+					style( '       Цена: ', fg='bright_yellow') + style( lc_price, fg='bright_red'))
+		except:
+			pass
 
 
 		return
