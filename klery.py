@@ -56,7 +56,8 @@ if sys.argv[1] == 'catalog':
 #        except:
 #            echo(style('Ошибка загрузки товара',bg='bright_red'))
 #            continue
-        lc_name = lo_good.name if lo_good.name.count(lo_good.article) != 0 else lo_good.article + ' ' + lo_good.name
+        lc_name = lo_good.article.replace(';',' ')[0:100]
+        #lc_name = lo_good.article if len(lc_name)==0 else lc_name
         ll_unique = list(set(lo_good.prices))
         print('Уникальные цены: ', ll_unique)
         if len(lo_good.prices) != len(lo_good.sizes):
@@ -74,20 +75,23 @@ if sys.argv[1] == 'catalog':
                 j = j + 1
                 print('Шаг: ', j)
             price.add_good('',
-                                prepare_str(lc_name),
-                                prepare_str(lo_good.description),
+                                prepare_str(lc_name.strip()[0:1024]),
+                                prepare_str(lo_good.description.strip()[0:1024]),
                                 prepare_str( str(round(float(lc_uprice.replace(',', '.').replace(' ', ''))*float(sys.argv[4]), 2))),
                                 '15',
                                 prepare_str(link),
                                 prepare_for_csv_non_list(lo_good.pictures),
                                 prepare_for_csv_list(ll_sizes))
             price.write_to_csv(sys.argv[3])
-
+    reverse_csv_price(sys.argv[3])
+    convert_file_to_ansi(sys.argv[3] + '_reversed.csv')
 if sys.argv[1] == 'reverse':
-    reverse_csv_price(sys.argv[2])
+    pass
+    #reverse_csv_price(sys.argv[2])
 
 if sys.argv[1] == 'ansi':
-    convert_file_to_ansi(sys.argv[2] + '_reversed.csv')
+    pass
+    #convert_file_to_ansi(sys.argv[2] + '_reversed.csv')
 
 try: wd.driver.quit()
 except: pass

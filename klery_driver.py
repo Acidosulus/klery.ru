@@ -83,13 +83,16 @@ class WD:
 		if len(lc_paginator)==0:
 			return [pc_link]
 		else:
-			soup = BS(lc_paginator, features='html5lib')
-			link = soup.find(lambda tag:((tag.name=="a") and ("|" in tag.text)))
-			page_count = int(sx(str(link),'?page=','"'))
 			ll = []
-			for i in range(1,page_count+1):
-				lc_link_on_page = pc_link + '?page='+str(i)
-				ll.append(lc_link_on_page)
+			try:
+				soup = BS(lc_paginator, features='html5lib')
+				link = soup.find(lambda tag:((tag.name=="a") and ("|" in tag.text)))
+				page_count = int(sx(str(link),'?page=','"'))
+				for i in range(1,page_count+1):
+					lc_link_on_page = pc_link + '?page='+str(i)
+					ll.append(lc_link_on_page)
+			except:
+				ll.append(pc_link)
 			return ll
 
 	def Write_To_File(self, cfilename):

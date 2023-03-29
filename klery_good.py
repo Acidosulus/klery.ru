@@ -57,7 +57,9 @@ class Good:
 		self.description = reduce(self.description)
 		self.description = self.description.replace("| ",'|')
 		self.description = reduce(self.description,"|")
-		
+		self.description = self.description.replace(';',' ')
+		self.description = ''
+
 		try:
 			elements = ol.driver.find_element(by=By.CLASS_NAME, value='owq-option').find_elements(by=By.CLASS_NAME, value='owq-item')
 			ii = 0
